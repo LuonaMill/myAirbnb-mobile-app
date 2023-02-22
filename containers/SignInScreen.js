@@ -21,8 +21,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 export default function SignInScreen({ setToken }) {
   const navigation = useNavigation();
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("nono@airbnb-api.com");
+  const [password, setPassword] = useState("pass");
   const [errorMessage, setErrorMessage] = useState("");
 
   const handleSubmit = async () => {
@@ -40,9 +40,9 @@ export default function SignInScreen({ setToken }) {
       );
       if (response.data) {
         setToken(response.data.token);
-        alert("Thanks for signing in");
+        alert(`Thanks for signing in ${response.data.token}`);
 
-        // navigation.navigate("Tab");
+        navigation.navigate("SignUp", { token: response.data.token });
       }
     } catch (error) {
       console.log(error.response);

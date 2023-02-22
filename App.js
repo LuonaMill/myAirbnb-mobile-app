@@ -91,12 +91,10 @@ export default function App() {
                       <Stack.Screen
                         name="Home"
                         options={{
-                          title: "My App",
-                          headerStyle: { backgroundColor: "red" },
-                          headerTitleStyle: { color: "white" },
+                          headerShown: false,
                         }}
                       >
-                        {() => <HomeScreen />}
+                        {() => <HomeScreen userToken={userToken} />}
                       </Stack.Screen>
 
                       <Stack.Screen
@@ -109,6 +107,21 @@ export default function App() {
                       </Stack.Screen>
                     </Stack.Navigator>
                   )}
+                </Tab.Screen>
+                <Tab.Screen
+                  name="TabProfile"
+                  options={{
+                    tabBarLabel: "Profil",
+                    tabBarIcon: ({ color, size }) => (
+                      <Ionicons
+                        name="person-circle-outline"
+                        size={size}
+                        color={color}
+                      />
+                    ),
+                  }}
+                >
+                  {() => <ProfileScreen />}
                 </Tab.Screen>
                 <Tab.Screen
                   name="TabSettings"

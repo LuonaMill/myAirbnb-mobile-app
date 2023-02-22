@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { useState } from "react";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import axios from "axios";
 import Constants from "expo-constants";
 import logo from "../assets/logo.png";
@@ -26,6 +26,7 @@ export default function SignUpScreen({ setToken }) {
   const [confPassword, setConfPassword] = useState("blabla");
   const [errorMessage, setErrorMessage] = useState("");
   const navigation = useNavigation();
+  const route = useRoute();
 
   const handleSubmit = async () => {
     try {
@@ -49,7 +50,7 @@ export default function SignUpScreen({ setToken }) {
         console.log(response.data);
         setToken(response.data.token);
         alert("Thanks for signing up");
-        navigation.navigate("Tab");
+        // navigation.navigate("Tab");
       }
     } catch (error) {
       // 3 - BACK  Vérifier que l'email soit dispo
@@ -137,6 +138,7 @@ export default function SignUpScreen({ setToken }) {
               Already have an account ? Sign in !
             </Text>
           </TouchableHighlight>
+          <Text>{route.params.token}</Text>
         </ScrollView>
       </SafeAreaView>
     </KeyboardAwareScrollView>
