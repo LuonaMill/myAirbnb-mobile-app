@@ -49,15 +49,17 @@ export default function HomeScreen({ userToken }) {
       <View style={styles.logoSection}>
         <Image source={logo} style={styles.logo} />
       </View>
-      <ScrollView contentContainerStyle={styles.scrollView}>
-        <View>
-          <FlatList
-            data={data}
-            keyExtractor={(item) => String(item._id)}
-            renderItem={({ item }) => <FlatOverview item={item} />}
-          />
-        </View>
-      </ScrollView>
+      {/* <ScrollView contentContainerStyle={styles.scrollView}> */}
+      {/* <View> */}
+      <FlatList
+        data={data}
+        keyExtractor={(item) => String(item._id)}
+        renderItem={({ item }) => (
+          <FlatOverview item={item} userToken={userToken} />
+        )}
+      />
+      {/* </View> */}
+      {/* </ScrollView> */}
     </SafeAreaView>
   );
 }
@@ -65,17 +67,17 @@ export default function HomeScreen({ userToken }) {
 const styles = StyleSheet.create({
   safeAreaView: {
     marginTop: Platform.OS === "android" ? Constants.statusBarHeight : 0,
-    flex: 1,
+    // flex: 1,
     backgroundColor: "white",
     justifyContent: "center",
     alignItems: "center",
     marginTop: Platform.OS === "android" ? Constants.statusBarHeight : 0,
   },
-  scrollView: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
+  // scrollView: {
+  //   flex: 1,
+  //   justifyContent: "center",
+  //   alignItems: "center",
+  // },
   logoSection: {
     width: "100%",
     paddingBottom: 1,

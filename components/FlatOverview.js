@@ -1,7 +1,17 @@
-import { Image, StyleSheet, Text, View } from "react-native";
+import {
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  TouchableWithoutFeedback,
+} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
 
-const FlatOverview = ({ item }) => {
+const FlatOverview = ({ item, userToken }) => {
+  const navigation = useNavigation();
+
   return (
     <View style={styles.overview}>
       <View style={styles.pictureOverview}>
@@ -11,6 +21,7 @@ const FlatOverview = ({ item }) => {
           resizeMode="cover"
           strict
         />
+
         <View style={styles.priceView}>
           <Text style={styles.price}>{item.price} €</Text>
         </View>
@@ -18,9 +29,18 @@ const FlatOverview = ({ item }) => {
       <View style={styles.descriptionOverview}>
         <View style={styles.flatDescription}>
           <View>
-            <Text style={styles.flatTitle} numberOfLines={1}>
-              {item.title}
-            </Text>
+            <TouchableOpacity
+              onPress={() => {
+                navigation.navigate("Room", { id: item._id });
+                console.log({ item });
+              }}
+            >
+              {/* <Text>Aller vers Room {item._id}</Text> */}
+
+              <Text style={styles.flatTitle} numberOfLines={1}>
+                {item.title}
+              </Text>
+            </TouchableOpacity>
           </View>
           <View style={styles.reviewSection}>
             <View>
@@ -72,15 +92,18 @@ export default FlatOverview;
 const styles = StyleSheet.create({
   overview: {
     flex: 1,
+    width: 470,
     justifyContent: "center",
     alignItems: "center",
     padding: 10,
+    // backgroundColor: "pink",
     // padding: 20,
     // margin: 20,
   },
   firstPicture: {
     height: 200,
     width: 400,
+    // marginRight: 200,
     // flex: 1,
   },
   priceView: {
@@ -107,7 +130,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     // backgroundColor: "grey",
     rowGap: 30,
-    padding: 5,
+    padding: 25,
   },
   flatDescription: {
     flex: 1,
