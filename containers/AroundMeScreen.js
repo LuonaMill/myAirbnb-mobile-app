@@ -1,6 +1,5 @@
 import {
   ActivityIndicator,
-  Text,
   SafeAreaView,
   View,
   useWindowDimensions,
@@ -60,48 +59,6 @@ export default function AroundMeScreen({ setToken }) {
     };
     getPermission();
   }, [userLatitude, userLongitude]);
-
-  // if (userLatitude && userLongitude) {
-  //   useEffect(() => {
-  //     const fetchLocations = async () => {
-  //       try {
-  //         const response = await axios.get(
-  //           `https://lereacteur-bootcamp-api.herokuapp.com/api/airbnb/rooms/around?latitude=${userLatitude}&longitude=${userLongitude}`
-  //         );
-  //         setIsLoading(false);
-  //         setFlatsData(response.location);
-  //         console.log(response.data.location);
-  //       } catch (error) {
-  //         console.log(error.response);
-  //       }
-  //     };
-  //     fetchLocations();
-  //   }, [userLatitude, userLongitude]);
-  // }
-
-  // const markers = [
-  //   {
-  //     id: 1,
-  //     latitude: 48.8564449,
-  //     longitude: 2.4002913,
-  //     title: "Le Reacteur",
-  //     description: "La formation des champion·ne·s !",
-  //   },
-  //   {
-  //     id: 2,
-  //     latitude: 43.597473,
-  //     longitude: 1.44438,
-  //     title: "Place de l'europe",
-  //     description: "Description d'une place",
-  //   },
-  //   {
-  //     id: 3,
-  //     latitude: 43.60971450805664,
-  //     longitude: 1.4308867454528809,
-  //     title: "Place des Carmes",
-  //     description: "Description d'une place",
-  //   },
-  // ];
 
   return isLoading === true ? (
     <ActivityIndicator />

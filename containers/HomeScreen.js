@@ -18,10 +18,6 @@ import logo from "../assets/logo-notext.jpg";
 import Constants from "expo-constants";
 import FlatOverview from "../components/FlatOverview";
 
-//!INFOS
-// URL: https://lereacteur-bootcamp-api.herokuapp.com/api/airbnb/rooms
-// Method: GET
-
 export default function HomeScreen({ userToken }) {
   const navigation = useNavigation();
   const { height, width } = useWindowDimensions();
