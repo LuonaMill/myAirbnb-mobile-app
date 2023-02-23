@@ -4,16 +4,39 @@ import {
   Text,
   TouchableOpacity,
   View,
-  TouchableWithoutFeedback,
+  useWindowDimensions,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 
-const FlatOverview = ({ item, userToken }) => {
+const FlatOverview = ({ item }) => {
   const navigation = useNavigation();
+  const { height, width } = useWindowDimensions();
+
+  const generateStars = (ratingValue) => {
+    const starsArray = [];
+    for (let i = 0; i < 5; i++) {
+      if (i < ratingValue) {
+        starsArray.push(
+          <Ionicons name="star-sharp" size={24} color="#FFB100" key={i} />
+        );
+      } else {
+        starsArray.push(
+          <Ionicons name="star-sharp" size={24} color="grey" key={i} />
+        );
+      }
+    }
+    return starsArray;
+  };
 
   return (
-    <View style={styles.overview}>
+    <TouchableOpacity
+      style={([styles.overview], { width: width })}
+      onPress={() => {
+        navigation.navigate("Room", { id: item._id });
+        console.log({ item });
+      }}
+    >
       <View style={styles.pictureOverview}>
         <Image
           source={{ uri: `${item.photos[0].url}` }}
@@ -29,49 +52,17 @@ const FlatOverview = ({ item, userToken }) => {
       <View style={styles.descriptionOverview}>
         <View style={styles.flatDescription}>
           <View>
-            <TouchableOpacity
-              onPress={() => {
-                navigation.navigate("Room", { id: item._id });
-                console.log({ item });
-              }}
-            >
-              {/* <Text>Aller vers Room {item._id}</Text> */}
+            {/* <Text>Aller vers Room {item._id}</Text> */}
 
-              <Text style={styles.flatTitle} numberOfLines={1}>
-                {item.title}
-              </Text>
-            </TouchableOpacity>
+            <Text style={styles.flatTitle} numberOfLines={1}>
+              {item.title}
+            </Text>
           </View>
           <View style={styles.reviewSection}>
-            <View>
-              <Text style={styles.starsSection}>
-                <Ionicons
-                  name="star-sharp"
-                  size={24}
-                  color={item.ratingValue > 0 ? "#FFB100" : "grey"}
-                />
-                <Ionicons
-                  name="star-sharp"
-                  size={24}
-                  color={item.ratingValue > 1 ? "#FFB100" : "grey"}
-                />
-                <Ionicons
-                  name="star-sharp"
-                  size={24}
-                  color={item.ratingValue > 2 ? "#FFB100" : "grey"}
-                />
-                <Ionicons
-                  name="star-sharp"
-                  size={24}
-                  color={item.ratingValue > 3 ? "#FFB100" : "grey"}
-                />
-                <Ionicons
-                  name="star-sharp"
-                  size={24}
-                  color={item.ratingValue === 5 ? "#FFB100" : "grey"}
-                />
-              </Text>
-            </View>
+            <Text style={styles.starsSection}>
+              {generateStars(item.ratingValue)}
+            </Text>
+
             <View>
               <Text style={{ color: "grey" }}>{item.reviews} reviews</Text>
             </View>
@@ -83,7 +74,7 @@ const FlatOverview = ({ item, userToken }) => {
           style={styles.avatar}
         />
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 
@@ -92,7 +83,7 @@ export default FlatOverview;
 const styles = StyleSheet.create({
   overview: {
     flex: 1,
-    width: 470,
+    // width: 470,
     justifyContent: "center",
     alignItems: "center",
     padding: 10,
@@ -121,7 +112,7 @@ const styles = StyleSheet.create({
   avatar: {
     height: 100,
     width: 100,
-    borderRadius: "50%",
+    borderRadius: 50,
   },
   descriptionOverview: {
     width: "100%",

@@ -9,6 +9,7 @@ import {
   ScrollView,
   StyleSheet,
   View,
+  useWindowDimensions,
 } from "react-native";
 import axios from "axios";
 import { useState, useEffect } from "react";
@@ -23,6 +24,7 @@ import FlatOverview from "../components/FlatOverview";
 
 export default function HomeScreen({ userToken }) {
   const navigation = useNavigation();
+  const { height, width } = useWindowDimensions();
   const [data, setData] = useState();
   const [isLoading, setIsLoading] = useState(true);
   useEffect(() => {
@@ -46,20 +48,21 @@ export default function HomeScreen({ userToken }) {
     <ActivityIndicator size="large" color="purple" style={{ marginTop: 100 }} />
   ) : (
     <SafeAreaView style={styles.safeAreaView}>
-      <View style={styles.logoSection}>
+      <View style={[styles.logoSection, { width: width }]}>
         <Image source={logo} style={styles.logo} />
       </View>
-      {/* <ScrollView contentContainerStyle={styles.scrollView}> */}
-      {/* <View> */}
+
       <FlatList
+        contentContainerStyle={{
+          flex: 1,
+          padding: 10,
+        }}
         data={data}
         keyExtractor={(item) => String(item._id)}
         renderItem={({ item }) => (
           <FlatOverview item={item} userToken={userToken} />
         )}
       />
-      {/* </View> */}
-      {/* </ScrollView> */}
     </SafeAreaView>
   );
 }
@@ -67,19 +70,12 @@ export default function HomeScreen({ userToken }) {
 const styles = StyleSheet.create({
   safeAreaView: {
     marginTop: Platform.OS === "android" ? Constants.statusBarHeight : 0,
-    // flex: 1,
     backgroundColor: "white",
     justifyContent: "center",
     alignItems: "center",
-    marginTop: Platform.OS === "android" ? Constants.statusBarHeight : 0,
   },
-  // scrollView: {
-  //   flex: 1,
-  //   justifyContent: "center",
-  //   alignItems: "center",
-  // },
+
   logoSection: {
-    width: "100%",
     paddingBottom: 1,
     borderBottomColor: "grey",
     borderBottomWidth: 0.2,

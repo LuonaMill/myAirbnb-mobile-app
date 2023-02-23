@@ -11,6 +11,7 @@ import SignUpScreen from "./containers/SignUpScreen";
 import SettingsScreen from "./containers/SettingsScreen";
 import SplashScreen from "./containers/SplashScreen";
 import RoomScreen from "./containers/RoomScreen";
+import AroundMeScreen from "./containers/AroundMeScreen";
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -77,6 +78,7 @@ export default function App() {
                   tabBarActiveTintColor: "tomato",
                   tabBarInactiveTintColor: "gray",
                 }}
+                initialRouteName="TabAroundMe"
               >
                 <Tab.Screen
                   name="TabHome"
@@ -110,6 +112,28 @@ export default function App() {
                   )}
                 </Tab.Screen>
                 <Tab.Screen
+                  name="TabAroundMe"
+                  options={{
+                    tabBarLabel: "Around Me",
+                    tabBarIcon: ({ color, size }) => (
+                      <Ionicons name="md-map-sharp" size={size} color={color} />
+                    ),
+                  }}
+                >
+                  {() => (
+                    <Stack.Navigator>
+                      <Stack.Screen
+                        name="AroundMe"
+                        options={{
+                          title: "Autour de moi",
+                        }}
+                      >
+                        {() => <AroundMeScreen setToken={setToken} />}
+                      </Stack.Screen>
+                    </Stack.Navigator>
+                  )}
+                </Tab.Screen>
+                <Tab.Screen
                   name="TabProfile"
                   options={{
                     tabBarLabel: "Profil",
@@ -124,7 +148,7 @@ export default function App() {
                 >
                   {() => <ProfileScreen />}
                 </Tab.Screen>
-                <Tab.Screen
+                {/* <Tab.Screen
                   name="TabSettings"
                   options={{
                     tabBarLabel: "Settings",
@@ -149,7 +173,7 @@ export default function App() {
                       </Stack.Screen>
                     </Stack.Navigator>
                   )}
-                </Tab.Screen>
+                </Tab.Screen> */}
               </Tab.Navigator>
             )}
           </Stack.Screen>

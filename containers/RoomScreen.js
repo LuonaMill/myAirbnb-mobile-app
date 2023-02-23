@@ -1,160 +1,171 @@
+import { useState, useEffect } from "react";
+import { useRoute } from "@react-navigation/native";
+import Constants from "expo-constants";
+import { Ionicons } from "@expo/vector-icons";
+import plan from "../assets/plan.png";
+import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
+
 import {
-  Text,
-  View,
   ActivityIndicator,
   Image,
+  ImageBackground,
+  Platform,
   SafeAreaView,
   ScrollView,
   StyleSheet,
+  Text,
   TouchableWithoutFeedback,
+  useWindowDimensions,
+  View,
 } from "react-native";
-import { useRoute } from "@react-navigation/native";
-import { useWindowDimensions } from "react-native";
-import { useState, useEffect } from "react";
 import axios from "axios";
-import FlatOverview from "../components/FlatOverview";
-import logo from "../assets/logo-notext.jpg";
-import { Ionicons } from "@expo/vector-icons";
-import Constants from "expo-constants";
+import Swiper from "react-native-swiper";
 import { SwiperFlatList } from "react-native-swiper-flatlist";
-import plan from "../assets/plan.png";
 
-const RoomScreen = ({ userToken }) => {
+const RoomScreen = () => {
   const route = useRoute();
-  //   console.log(route.params.id);
-  const [item, setItem] = useState();
+  const roomId = route.params.id;
+  console.log(route);
+  const { height, width } = useWindowDimensions();
+
+  const [room, setRoom] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [errorMessage, setErrorMessage] = useState("");
   const [showAll, setShowAll] = useState(false);
 
-  const { styles } = useStyle();
-
   useEffect(() => {
-    const fetchData = async () => {
-      try {
+    try {
+      const fetchRooms = async () => {
         const response = await axios.get(
-          `https://lereacteur-bootcamp-api.herokuapp.com/api/airbnb/rooms/${route.params.id}`
+          `https://lereacteur-bootcamp-api.herokuapp.com/api/airbnb/rooms/${roomId}`
         );
-        if (response.data) {
-          setItem(response.data);
-          setIsLoading(false);
-        }
-      } catch (error) {
-        setErrorMessage(error.response);
+        // console.log(response.data);
+        setRoom(response.data);
+        setIsLoading(false);
+      };
+      fetchRooms();
+    } catch (error) {
+      console.log(error);
+    }
+  }, [roomId]);
+
+  const generateStars = (ratingValue) => {
+    const starsArray = [];
+    for (let i = 0; i < 5; i++) {
+      if (i < ratingValue) {
+        starsArray.push(
+          <Ionicons name="star-sharp" size={24} color="#FFB100" key={i} />
+        );
+      } else {
+        starsArray.push(
+          <Ionicons name="star-sharp" size={24} color="grey" key={i} />
+        );
       }
-    };
-    fetchData();
-  }, []);
+    }
+    return starsArray;
+  };
 
-  return isLoading ? (
-    <ActivityIndicator size="large" color="purple" style={{ marginTop: 100 }} />
+  return isLoading === true ? (
+    <ActivityIndicator />
   ) : (
-    <SafeAreaView style={styles.safeAreaView}>
-      <View style={styles.logoSection}>
-        <Image source={logo} style={styles.logo} />
-      </View>
-      <ScrollView contentContainerStyle={styles.scrollView}>
-        {/* <FlatOverview item={data} /> */}
-        <View style={styles.overview}>
-          <View style={styles.pictureOverview}>
-            <SwiperFlatList
-              style={styles.carousel}
-              showPagination
-              data={item.photos}
-              renderItem={({ item }) => (
-                <Image
-                  source={{ uri: `${item.url}` }}
-                  style={styles.firstPicture}
-                  resizeMode="cover"
-                  strict
-                />
-              )}
-            />
+    <SafeAreaView
+      style={{
+        marginTop: Platform.OS === "android" ? Constants.statusBarHeight : 0,
+      }}
+    >
+      <ScrollView>
+        <SwiperFlatList
+          style={styles.wrapper}
+          showPagination
+          data={room.photos}
+          renderItem={({ item }) => (
+            <ImageBackground
+              source={{ uri: item.url }}
+              style={{
+                height: "100%",
+                width: "100%",
+                justifyContent: "flex-end",
+              }}
+            >
+              <View style={styles.priceView}>
+                <Text style={styles.priceText}>{room.price} €</Text>
+              </View>
+            </ImageBackground>
+          )}
+        />
+        <View
+          style={{
+            flexDirection: "row",
+            padding: 15,
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          <View style={{ width: width * 0.65 }}>
+            <Text style={{ fontSize: 20 }} numberOfLines={1}>
+              {room.title}
+            </Text>
 
-            <View style={styles.priceView}>
-              <Text style={styles.price}>{item.price} €</Text>
-            </View>
-          </View>
-          <View style={styles.descriptionOverview}>
-            <View style={styles.flatDescription}>
-              <View>
-                <Text style={styles.flatTitle} numberOfLines={1}>
-                  {item.title}
-                </Text>
-              </View>
-              <View style={styles.reviewSection}>
-                <View>
-                  <Text style={styles.starsSection}>
-                    <Ionicons
-                      name="star-sharp"
-                      size={24}
-                      color={item.ratingValue > 0 ? "#FFB100" : "grey"}
-                    />
-                    <Ionicons
-                      name="star-sharp"
-                      size={24}
-                      color={item.ratingValue > 1 ? "#FFB100" : "grey"}
-                    />
-                    <Ionicons
-                      name="star-sharp"
-                      size={24}
-                      color={item.ratingValue > 2 ? "#FFB100" : "grey"}
-                    />
-                    <Ionicons
-                      name="star-sharp"
-                      size={24}
-                      color={item.ratingValue > 3 ? "#FFB100" : "grey"}
-                    />
-                    <Ionicons
-                      name="star-sharp"
-                      size={24}
-                      color={item.ratingValue === 5 ? "#FFB100" : "grey"}
-                    />
-                  </Text>
-                </View>
-                <View>
-                  <Text style={{ color: "grey" }}>{item.reviews} reviews</Text>
-                </View>
-              </View>
-            </View>
+            <Text>{generateStars(room.ratingValue)}</Text>
 
-            <Image
-              source={{ uri: `${item.user.account.photo.url}` }}
-              style={styles.avatar}
-            />
+            <Text style={{ color: "grey" }}>{room.reviews} reviews</Text>
           </View>
-          <View style={styles.descriptionLong}>
-            {!showAll ? (
-              <View>
-                <Text style={styles.description3Lines} numberOfLines={3}>
-                  {item.description}
-                </Text>
-                <TouchableWithoutFeedback
-                  onPress={() => {
-                    setShowAll(true);
-                  }}
-                >
-                  <Text style={{ color: "grey", marginTop: 10 }}>
-                    Show More 🔽
-                  </Text>
-                </TouchableWithoutFeedback>
-              </View>
-            ) : (
-              <View>
-                <Text style={styles.description3Lines}>{item.description}</Text>
-                <TouchableWithoutFeedback
-                  onPress={() => {
-                    setShowAll(false);
-                  }}
-                >
-                  <Text style={{ color: "grey", marginTop: 10 }}>
-                    Show Less 🔼
-                  </Text>
-                </TouchableWithoutFeedback>
-              </View>
-            )}
-          </View>
+          <Image
+            source={{ uri: `${room.user.account.photo.url}` }}
+            style={styles.avatar}
+          />
         </View>
+        <View style={{ padding: 15 }}>
+          {!showAll ? (
+            <View>
+              <Text style={styles.description3Lines} numberOfLines={3}>
+                {room.description}
+              </Text>
+              <TouchableWithoutFeedback
+                onPress={() => {
+                  setShowAll(true);
+                }}
+              >
+                <Text style={{ color: "grey", marginTop: 10 }}>
+                  Show More 🔽
+                </Text>
+              </TouchableWithoutFeedback>
+            </View>
+          ) : (
+            <View>
+              <Text style={styles.description3Lines}>{room.description}</Text>
+              <TouchableWithoutFeedback
+                onPress={() => {
+                  setShowAll(false);
+                }}
+              >
+                <Text style={{ color: "grey", marginTop: 10 }}>
+                  Show Less 🔼
+                </Text>
+              </TouchableWithoutFeedback>
+            </View>
+          )}
+        </View>
+        <MapView
+          provider={PROVIDER_GOOGLE}
+          style={{ height: 300, width: width }}
+          showsUserLocation={true}
+          initialRegion={{
+            latitude: room.location[1],
+            longitude: room.location[0],
+            latitudeDelta: 0.2,
+            longitudeDelta: 0.2,
+          }}
+        >
+          <Marker
+            coordinate={{
+              latitude: room.location[1],
+              longitude: room.location[0],
+            }}
+            title={room.title}
+            description={room.description}
+          />
+        </MapView>
+        {/* <Image source={plan} style={{ width: width, height: 300 }} /> */}
       </ScrollView>
     </SafeAreaView>
   );
@@ -162,82 +173,28 @@ const RoomScreen = ({ userToken }) => {
 
 export default RoomScreen;
 
-const useStyle = () => {
-  const dimensions = useWindowDimensions();
-  console.log(dimensions);
-  const styles = StyleSheet.create({
-    safeAreaView: {
-      marginTop: Platform.OS === "android" ? Constants.statusBarHeight : 0,
-      flex: 1,
-      backgroundColor: "white",
-      justifyContent: "center",
-      alignItems: "center",
-    },
-    scrollView: {
-      // flex: 1,
-      justifyContent: "center",
-      alignItems: "center",
-    },
-    logoSection: {
-      width: "100%",
-      paddingBottom: 1,
-      borderBottomColor: "grey",
-      borderBottomWidth: 0.2,
-      alignItems: "center",
-    },
-    logo: {
-      height: 75,
-      width: 75,
-    },
-    carousel: { backgroundColor: "pink" },
-    firstPicture: {
-      height: "100%",
-      width: dimensions.width,
-    },
-    priceView: {
-      height: 50,
-      width: 90,
-      backgroundColor: "black",
-      alignItems: "center",
-      justifyContent: "center",
-      borderTopRightRadius: 10,
-      borderBottomRightRadius: 10,
-      position: "absolute",
-      bottom: 20,
-    },
-    price: { color: "white", fontSize: 20 },
-    avatar: {
-      height: 100,
-      width: 100,
-      borderRadius: 50,
-    },
-    descriptionOverview: {
-      width: dimensions.width,
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "space-between",
-      // backgroundColor: "grey",
-      padding: 15,
-    },
-    flatDescription: {
-      flex: 1,
-      height: 110,
-      justifyContent: "space-evenly",
-      // backgroundColor: "pink",
-    },
-    flatTitle: {
-      fontSize: 20,
-    },
-    reviewSection: {
-      flexDirection: "row",
-      alignItems: "center",
-    },
-    starsSection: {
-      marginRight: 10,
-    },
-    descriptionLong: {
-      padding: 15,
-    },
-  });
-  return { styles };
-};
+const styles = StyleSheet.create({
+  wrapper: {
+    height: 300,
+  },
+  slide: {
+    height: 300,
+  },
+  priceView: {
+    backgroundColor: "black",
+    width: 100,
+    height: 50,
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 10,
+  },
+  priceText: {
+    color: "white",
+    fontSize: 20,
+  },
+  avatar: {
+    height: 100,
+    width: 100,
+    borderRadius: 50,
+  },
+});
